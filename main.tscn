@@ -1,6 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://co48ji44q3tlo"]
+[gd_scene load_steps=3 format=3 uid="uid://co48ji44q3tlo"]
 
 [ext_resource type="Texture2D" uid="uid://ddqretl2pndi3" path="res://icon.svg" id="1_6iuwm"]
+
+[sub_resource type="GDScript" id="GDScript_4pact"]
+resource_name = "test"
+script/source = "extends Button
+
+
+func _on_pressed() -> void:
+	$\"../../../Icon\".scale *= 0.5
+"
 
 [node name="Node2D" type="Node2D"]
 
@@ -9,3 +18,26 @@ position = Vector2(524, 325)
 rotation = -0.80419
 scale = Vector2(4.60156, 4.60156)
 texture = ExtResource("1_6iuwm")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 25.0
+offset_right = 237.0
+offset_bottom = 170.0
+theme_override_font_sizes/font_size = 100
+text = "Test
+"
+script = SubResource("GDScript_4pact")
+
+[connection signal="pressed" from="CanvasLayer/Control/Button" to="CanvasLayer/Control/Button" method="_on_pressed"]
