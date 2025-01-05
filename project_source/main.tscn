@@ -1,21 +1,78 @@
-[gd_scene load_steps=3 format=3 uid="uid://co48ji44q3tlo"]
+[gd_scene load_steps=4 format=3 uid="uid://co48ji44q3tlo"]
+
+[sub_resource type="GDScript" id="GDScript_ucljg"]
+resource_name = "draggable_cube"
+script/source = "extends StaticBody3D
+
+var depth := 0.0
+var collider : Node3D
+
+var is_dragging := false
+var drag_position := Vector3()
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	global_rotation.y += delta
+	
+	if collider != null:
+		collider.global_position = drag_position
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch:
+		var intersection_result :=  get_screen_touch_intersection(event.position)
+		if intersection_result.is_empty():
+			collider = null
+			return
+		
+		depth = Vector3(intersection_result.position - get_viewport().get_camera_3d().project_position(get_viewport().get_camera_3d().unproject_position(intersection_result.position), 0)).length()
+		
+		collider = intersection_result.collider as Node3D
+		if event.is_pressed():
+			if collider != null:
+				is_dragging = true
+		elif event.is_released():
+			collider = null
+			is_dragging = false
+	if event is InputEventScreenDrag:
+		if is_dragging:
+			drag_position = get_viewport().get_camera_3d().project_position(event.position, depth)
+			
+
+
+func get_screen_touch_intersection(screen_pos) -> Dictionary:
+	var current_cam = get_viewport().get_camera_3d()
+	var params = PhysicsRayQueryParameters3D.new()
+	params.from = current_cam.project_ray_origin(screen_pos)
+	params.to = current_cam.project_position(screen_pos, 1000)
+	
+	var worldspace = get_world_3d().direct_space_state
+	return worldspace.intersect_ray(params)
+"
 
 [sub_resource type="BoxMesh" id="BoxMesh_7uu41"]
 
-[sub_resource type="GDScript" id="GDScript_b3e42"]
-resource_name = "test"
-script/source = "extends MeshInstance3D
-
-func _process(delta: float) -> void:
-	global_rotation.y += delta
-"
+[sub_resource type="BoxShape3D" id="BoxShape3D_torax"]
 
 [node name="Node3D" type="Node3D"]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+script = SubResource("GDScript_ucljg")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
 transform = Transform3D(0.707107, 0.707107, 0, -0.57596, 0.57596, -0.58012, -0.410207, 0.410207, 0.814531, 0, 0, 0)
 mesh = SubResource("BoxMesh_7uu41")
-script = SubResource("GDScript_b3e42")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(0.707107, 0.707107, 0, -0.57596, 0.57596, -0.58012, -0.410207, 0.410207, 0.814531, 0, 0, 0)
+shape = SubResource("BoxShape3D_torax")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0349087, 0.348406, 2.47055)
