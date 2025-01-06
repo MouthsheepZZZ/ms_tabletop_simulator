@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://cltg6t4vjf84y"]
+
+[ext_resource type="PackedScene" uid="uid://dgd66w3g55mqw" path="res://easy_russian_revolver/prop/revolver_wheel/revolver_wheel.tscn" id="1_qv2f4"]
+
+[node name="RusRevolverMain" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.935715, -0.200974, 0.289908, 0, 0.821836, 0.569724, -0.352756, -0.5331, 0.769004, -0.863047, 2.69158, -0.0305212)
+shadow_enabled = true
+
+[node name="RevolverWheel" parent="." instance=ExtResource("1_qv2f4")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -1.91116, 0, 0)
+
+[connection signal="pressed" from="RevolverWheel" to="RevolverWheel" method="_on_pressed"]

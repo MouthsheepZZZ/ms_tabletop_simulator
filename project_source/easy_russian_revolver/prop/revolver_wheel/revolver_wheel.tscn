@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://dgd66w3g55mqw"]
+
+[ext_resource type="Script" path="res://easy_russian_revolver/prop/revolver_wheel/revolver_wheel.gd" id="1_goshi"]
+[ext_resource type="Script" path="res://system/interaction/touchable_object_3d.gd" id="1_gp078"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_atwla"]
+height = 1.0
+radial_segments = 6
+rings = 1
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_2stwx"]
+height = 1.0
+
+[node name="RevolverWheel" type="StaticBody3D"]
+script = ExtResource("1_gp078")
+
+[node name="RevolverWheelComponent" type="Node" parent="." node_paths=PackedStringArray("revolver_wheel")]
+script = ExtResource("1_goshi")
+revolver_wheel = NodePath("..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("CylinderMesh_atwla")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("CylinderShape3D_2stwx")
+
+[connection signal="dragging" from="." to="RevolverWheelComponent" method="drag_wheel"]
+[connection signal="released" from="." to="RevolverWheelComponent" method="release_wheel"]
